@@ -1,73 +1,86 @@
-# React + TypeScript + Vite
+# REI Fertility Calculator
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A web-based tool for reproductive endocrinology practitioners to compare fertility outcomes between spontaneous conception and IVF + PGT-A pathways.
 
-Currently, two official plugins are available:
+**Live Demo**: [https://hendrixguar.github.io/fertility-predictor/](https://hendrixguar.github.io/fertility-predictor/)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Features
 
-## React Compiler
+- **Patient Input Form**: Age, AMH, gravidity status, and time horizon
+- **AMH Percentile Display**: Visual comparison against age-matched population norms
+- **Dual Pathway Analysis**:
+  - **Pathway A**: Spontaneous conception probability over time
+  - **Pathway B**: IVF + PGT-A single cycle outcomes
+- **Full Pipeline Visibility**: See all intermediate calculations, not just final results
+- **Side-by-Side Comparison**: Understand the relative advantage of each approach
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Screenshot
 
-## Expanding the ESLint configuration
+The calculator displays:
+- Monthly fecundability → Cumulative pregnancy → Ongoing pregnancy → Healthy baby (spontaneous)
+- Oocytes → MII → 2PN → Blastocysts → Euploid embryos → Live birth (IVF)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Data Sources
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+All calculations are based on peer-reviewed clinical research:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+| Parameter | Source |
+|-----------|--------|
+| Oocyte prediction | La Marca et al., 2012 |
+| Spontaneous fecundability | Steiner et al., 2016 |
+| Miscarriage rates | Magnus et al., 2019 |
+| Aneuploidy risk | ACOG, 2020 |
+| Blastulation rates | Romanski et al., 2022 |
+| Euploidy rates | Franasiak et al., 2014 |
+| Live birth per euploid | Yan et al., 2021; Linder et al., 2025 |
+| AMH reference data | Aslan et al., 2025 (n=22,920) |
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- npm
+
+### Installation
+
+```bash
+git clone https://github.com/hendrixguar/fertility-predictor.git
+cd fertility-predictor
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Development
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
 ```
+
+Open [http://localhost:5173/fertility-predictor/](http://localhost:5173/fertility-predictor/)
+
+### Production Build
+
+```bash
+npm run build
+```
+
+### Deploy to GitHub Pages
+
+```bash
+npm run deploy
+```
+
+## Tech Stack
+
+- React 18
+- TypeScript
+- Vite
+- Tailwind CSS v4
+
+## Disclaimer
+
+This calculator is for educational and counseling purposes only. Results are estimates based on population-level data and may not reflect individual outcomes. Always discuss fertility options with a qualified reproductive endocrinologist.
+
+## License
+
+MIT
