@@ -11,7 +11,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
-  "homepage": "https://github.com/fertility-predictor",
+  "homepage": "https://isabellemmason-cmyk.github.io/fertility-predictor",
   "dependencies": {
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
