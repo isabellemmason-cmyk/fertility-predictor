@@ -107,15 +107,21 @@ export function SpontaneousResults({ results, timeHorizon }: SpontaneousResultsP
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-xs text-blue-700">At 10 weeks (1st trimester)</span>
-              <span className="text-sm font-semibold text-blue-900">1 in {results.trisomy21FirstTrimester}</span>
+              <span className="text-sm font-semibold text-blue-900">
+                1 in {results.trisomy21FirstTrimester} ({formatPercent(1 / results.trisomy21FirstTrimester)})
+              </span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-xs text-blue-700">2nd trimester</span>
-              <span className="text-sm font-semibold text-blue-900">1 in {results.trisomy21SecondTrimester}</span>
+              <span className="text-sm font-semibold text-blue-900">
+                1 in {results.trisomy21SecondTrimester} ({formatPercent(1 / results.trisomy21SecondTrimester)})
+              </span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-xs text-blue-700">At delivery</span>
-              <span className="text-sm font-semibold text-blue-900">1 in {results.trisomy21Delivery}</span>
+              <span className="text-sm font-semibold text-blue-900">
+                1 in {results.trisomy21Delivery} ({formatPercent(1 / results.trisomy21Delivery)})
+              </span>
             </div>
           </div>
         </div>
