@@ -3,10 +3,14 @@ import {
   lookupFecundability,
   lookupMiscarriage,
   lookupAneuploidy,
+  lookupTrisomy21FirstTrimester,
+  lookupTrisomy21SecondTrimester,
+  lookupTrisomy21Delivery,
   lookupBlastulation,
   lookupEuploidy,
   lookupLiveBirthPerEuploid,
-  OOCYTE_MODEL,
+  lookupCycleCancellationRisk,
+  lookupOocyteRetrieval,
   MATURATION_RATE,
   FERTILIZATION_RATE,
 } from './lookupTables';
@@ -32,7 +36,12 @@ export function calculateSpontaneous(inputs: PatientInputs): SpontaneousResults 
   // 5. Aneuploidy risk at delivery
   const aneuploidyRisk = lookupAneuploidy(inputs.age);
 
-  // 6. Final healthy baby probability = ongoing pregnancy × (1 - aneuploidy risk)
+  // 6. Trisomy 21 risks at different time points
+  const trisomy21FirstTrimester = lookupTrisomy21FirstTrimester(inputs.age);
+  const trisomy21SecondTrimester = lookupTrisomy21SecondTrimester(inputs.age);
+  const trisomy21Delivery = lookupTrisomy21Delivery(inputs.age);
+
+  // 7. Final healthy baby probability = ongoing pregnancy × (1 - aneuploidy risk)
   const healthyBaby = ongoingPregnancy * (1 - aneuploidyRisk);
 
   return {
@@ -41,6 +50,9 @@ export function calculateSpontaneous(inputs: PatientInputs): SpontaneousResults 
     miscarriageRate,
     ongoingPregnancy,
     aneuploidyRisk,
+    trisomy21FirstTrimester,
+    trisomy21SecondTrimester,
+    trisomy21Delivery,
     healthyBaby,
   };
 }
@@ -50,13 +62,15 @@ export function calculateSpontaneous(inputs: PatientInputs): SpontaneousResults 
  * Pathway B: IVF with preimplantation genetic testing
  */
 export function calculateIVF(inputs: PatientInputs): IVFResults {
-  // 1. Predicted oocytes (La Marca 2012 Model 1)
-  // Formula: ln(oocytes) = 3.21 - 0.036×Age + 0.089×AMH
-  const lnOocytes =
-    OOCYTE_MODEL.intercept -
-    OOCYTE_MODEL.ageCoefficient * inputs.age +
-    OOCYTE_MODEL.amhCoefficient * inputs.amh;
-  const oocytes = Math.exp(lnOocytes);
+  // 0. Cycle cancellation risk (risk of not making it to retrieval)
+  const cycleCancellationRisk = lookupCycleCancellationRisk(inputs.age, inputs.amh);
+
+  // 1. Predicted oocytes retrieved (Reichman et al.)
+  // Based on clinical data stratified by AMH and age
+  const oocyteData = lookupOocyteRetrieval(inputs.age, inputs.amh);
+  const oocytes = oocyteData.mean;
+  const oocytesLowerQuartile = oocyteData.lowerQuartile;
+  const oocytesUpperQuartile = oocyteData.upperQuartile;
 
   // 2. Mature oocytes (MII) - 82% maturation rate
   const matureOocytes = oocytes * MATURATION_RATE;
@@ -82,12 +96,21 @@ export function calculateIVF(inputs: PatientInputs): IVFResults {
   // 8. Expected live births = euploid blasts × LB rate per euploid
   const expectedLiveBirths = euploidBlasts * liveBirthPerEuploid;
 
-  // 9. Final healthy baby probability
-  // Simplified as P(≥1 euploid) × LB rate per euploid
-  const healthyBaby = pAtLeastOneEuploid * liveBirthPerEuploid;
+  // 9. Conditional healthy baby probability (assuming retrieval succeeds)
+  // This is P(≥1 euploid) × LB rate per euploid, given that retrieval happens
+  const healthyBabyConditional = pAtLeastOneEuploid * liveBirthPerEuploid;
+
+  // 10. Overall healthy baby probability (accounting for cycle cancellation)
+  // Must factor in the probability that retrieval actually happens
+  // P(healthy baby) = P(retrieval succeeds) × P(≥1 euploid) × P(LB | euploid)
+  const pRetrievalSucceeds = 1 - cycleCancellationRisk;
+  const healthyBaby = pRetrievalSucceeds * healthyBabyConditional;
 
   return {
+    cycleCancellationRisk,
     oocytes,
+    oocytesLowerQuartile,
+    oocytesUpperQuartile,
     matureOocytes,
     fertilized,
     blastocysts,
@@ -95,6 +118,7 @@ export function calculateIVF(inputs: PatientInputs): IVFResults {
     pAtLeastOneEuploid,
     liveBirthPerEuploid,
     expectedLiveBirths,
+    healthyBabyConditional,
     healthyBaby,
   };
 }

@@ -82,7 +82,7 @@ function App() {
 
             <p className="font-medium text-gray-700 pt-3">Data Sources</p>
             <ul className="grid grid-cols-1 md:grid-cols-2 gap-1">
-              <li>• Oocyte prediction: La Marca 2012</li>
+              <li>• Oocyte retrieval: Reichman et al.</li>
               <li>• Spontaneous fecundability: Steiner 2016</li>
               <li>• Miscarriage rates: Magnus 2019</li>
               <li>• Aneuploidy risk: ACOG 2020</li>

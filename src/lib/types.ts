@@ -13,11 +13,17 @@ export interface SpontaneousResults {
   miscarriageRate: number;
   ongoingPregnancy: number;
   aneuploidyRisk: number;
+  trisomy21FirstTrimester: number; // 1 in X risk at 10 weeks
+  trisomy21SecondTrimester: number; // 1 in X risk in 2nd trimester
+  trisomy21Delivery: number; // 1 in X risk at delivery
   healthyBaby: number;
 }
 
 export interface IVFResults {
+  cycleCancellationRisk: number;
   oocytes: number;
+  oocytesLowerQuartile: number;
+  oocytesUpperQuartile: number;
   matureOocytes: number;
   fertilized: number;
   blastocysts: number;
@@ -25,7 +31,14 @@ export interface IVFResults {
   pAtLeastOneEuploid: number;
   liveBirthPerEuploid: number;
   expectedLiveBirths: number;
-  healthyBaby: number;
+  healthyBabyConditional: number; // Probability assuming retrieval succeeds
+  healthyBaby: number; // Overall probability including cancellation risk
+}
+
+export interface OocyteRetrievalData {
+  mean: number;
+  lowerQuartile: number;
+  upperQuartile: number;
 }
 
 export interface AMHPercentileData {

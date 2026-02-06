@@ -101,6 +101,25 @@ export function SpontaneousResults({ results, timeHorizon }: SpontaneousResultsP
           description="Any chromosomal anomaly at delivery"
         />
 
+        {/* Trisomy 21 Risk Details */}
+        <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-100">
+          <h3 className="text-sm font-semibold text-blue-800 mb-3">Trisomy 21 (Down Syndrome) Risk</h3>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-blue-700">At 10 weeks (1st trimester)</span>
+              <span className="text-sm font-semibold text-blue-900">1 in {results.trisomy21FirstTrimester}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-blue-700">2nd trimester</span>
+              <span className="text-sm font-semibold text-blue-900">1 in {results.trisomy21SecondTrimester}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-blue-700">At delivery</span>
+              <span className="text-sm font-semibold text-blue-900">1 in {results.trisomy21Delivery}</span>
+            </div>
+          </div>
+        </div>
+
         <div className="flex items-center justify-center">
           <svg className="w-4 h-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />

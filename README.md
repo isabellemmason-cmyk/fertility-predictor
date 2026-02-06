@@ -26,7 +26,7 @@ All calculations are based on peer-reviewed clinical research:
 
 | Parameter | Source |
 |-----------|--------|
-| Oocyte prediction | La Marca et al., 2012 |
+| Oocyte retrieval | Reichman et al. |
 | Spontaneous fecundability | Steiner et al., 2016 |
 | Miscarriage rates | Magnus et al., 2019 |
 | Aneuploidy risk | ACOG, 2020 |

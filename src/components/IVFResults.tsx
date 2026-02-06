@@ -11,21 +11,38 @@ interface StepProps {
   subValue?: string;
   description?: string;
   isHighlight?: boolean;
+  isWarning?: boolean;
 }
 
-function Step({ label, value, subValue, description, isHighlight }: StepProps) {
+function Step({ label, value, subValue, description, isHighlight, isWarning }: StepProps) {
   return (
     <div
       className={`p-4 rounded-lg ${
-        isHighlight ? 'bg-blue-50 border-2 border-blue-200' : 'bg-gray-50'
+        isWarning
+          ? 'bg-orange-50 border-2 border-orange-200'
+          : isHighlight
+          ? 'bg-blue-50 border-2 border-blue-200'
+          : 'bg-gray-50'
       }`}
     >
       <div className="flex justify-between items-start">
-        <span className={`text-sm ${isHighlight ? 'font-semibold text-blue-800' : 'text-gray-600'}`}>
+        <span
+          className={`text-sm ${
+            isWarning
+              ? 'font-semibold text-orange-800'
+              : isHighlight
+              ? 'font-semibold text-blue-800'
+              : 'text-gray-600'
+          }`}
+        >
           {label}
         </span>
         <div className="text-right">
-          <span className={`text-lg font-bold ${isHighlight ? 'text-blue-600' : 'text-gray-800'}`}>
+          <span
+            className={`text-lg font-bold ${
+              isWarning ? 'text-orange-600' : isHighlight ? 'text-blue-600' : 'text-gray-800'
+            }`}
+          >
             {value}
           </span>
           {subValue && <span className="text-sm text-gray-400 ml-1">{subValue}</span>}
@@ -61,9 +78,18 @@ export function IVFResults({ results }: IVFResultsProps) {
 
       <div className="space-y-3">
         <Step
+          label="Risk of Cycle Cancellation"
+          value={formatPercent(results.cycleCancellationRisk)}
+          description="Risk of not making it to oocyte retrieval"
+          isWarning
+        />
+
+        <Arrow />
+
+        <Step
           label="Predicted Oocytes"
           value={formatNumber(results.oocytes)}
-          description="Based on age + AMH (La Marca 2012)"
+          description={`Range: ${formatNumber(results.oocytesLowerQuartile, 0)}–${formatNumber(results.oocytesUpperQuartile, 0)} (IQR)`}
         />
 
         <Arrow />
@@ -128,6 +154,7 @@ export function IVFResults({ results }: IVFResultsProps) {
         <Step
           label="Healthy Baby Probability"
           value={formatPercent(results.healthyBaby)}
+          description="Overall probability (includes cycle cancellation risk)"
           isHighlight
         />
       </div>

@@ -1,4 +1,4 @@
-import type { Gravidity, AMHPercentileData } from './types';
+import type { Gravidity, AMHPercentileData, OocyteRetrievalData } from './types';
 
 // Spontaneous Fecundability (Steiner 2016)
 // Format: { ageMin: { nulligravid: rate, prior_pregnancy: rate } }
@@ -75,6 +75,138 @@ export function lookupAneuploidy(age: number): number {
   }
 
   return ANEUPLOIDY_DATA[ageKey];
+}
+
+// Trisomy 21 Risk at 1st Trimester (10 weeks) - Snijders et al. 1999
+// Values represent "1 in X" risk (e.g., 983 means 1 in 983)
+const TRISOMY21_FIRST_TRIMESTER_DATA: Record<number, number> = {
+  20: 983,
+  25: 870,
+  30: 576,
+  31: 500,
+  32: 424,
+  33: 352,
+  34: 287,
+  35: 229,
+  36: 180,
+  37: 140,
+  38: 108,
+  39: 82,
+  40: 62,
+  41: 47,
+  42: 35,
+  43: 26,
+  44: 20,
+  45: 15,
+};
+
+export function lookupTrisomy21FirstTrimester(age: number): number {
+  const ages = Object.keys(TRISOMY21_FIRST_TRIMESTER_DATA).map(Number).sort((a, b) => a - b);
+
+  // Clamp to available range
+  if (age < ages[0]) return TRISOMY21_FIRST_TRIMESTER_DATA[ages[0]];
+  if (age > ages[ages.length - 1]) return TRISOMY21_FIRST_TRIMESTER_DATA[ages[ages.length - 1]];
+
+  // Find exact match or closest
+  let ageKey = ages[0];
+  let minDiff = Math.abs(age - ages[0]);
+  for (const a of ages) {
+    const diff = Math.abs(age - a);
+    if (diff < minDiff) {
+      minDiff = diff;
+      ageKey = a;
+    }
+  }
+
+  return TRISOMY21_FIRST_TRIMESTER_DATA[ageKey];
+}
+
+// Trisomy 21 Risk at 2nd Trimester - Snijders et al. 1999
+// Values represent "1 in X" risk
+const TRISOMY21_SECOND_TRIMESTER_DATA: Record<number, number> = {
+  20: 1295,
+  25: 1147,
+  30: 759,
+  31: 658,
+  32: 559,
+  33: 464,
+  34: 378,
+  35: 302,
+  36: 238,
+  37: 185,
+  38: 142,
+  39: 108,
+  40: 82,
+  41: 62,
+  42: 46,
+  43: 35,
+  44: 26,
+  45: 19,
+};
+
+export function lookupTrisomy21SecondTrimester(age: number): number {
+  const ages = Object.keys(TRISOMY21_SECOND_TRIMESTER_DATA).map(Number).sort((a, b) => a - b);
+
+  // Clamp to available range
+  if (age < ages[0]) return TRISOMY21_SECOND_TRIMESTER_DATA[ages[0]];
+  if (age > ages[ages.length - 1]) return TRISOMY21_SECOND_TRIMESTER_DATA[ages[ages.length - 1]];
+
+  // Find exact match or closest
+  let ageKey = ages[0];
+  let minDiff = Math.abs(age - ages[0]);
+  for (const a of ages) {
+    const diff = Math.abs(age - a);
+    if (diff < minDiff) {
+      minDiff = diff;
+      ageKey = a;
+    }
+  }
+
+  return TRISOMY21_SECOND_TRIMESTER_DATA[ageKey];
+}
+
+// Trisomy 21 Risk at Delivery - Snijders et al. 1999
+// Values represent "1 in X" risk
+const TRISOMY21_DELIVERY_DATA: Record<number, number> = {
+  20: 1527,
+  25: 1352,
+  30: 895,
+  31: 776,
+  32: 659,
+  33: 547,
+  34: 446,
+  35: 356,
+  36: 280,
+  37: 218,
+  38: 167,
+  39: 128,
+  40: 97,
+  41: 73,
+  42: 55,
+  43: 41,
+  44: 30,
+  45: 23,
+};
+
+export function lookupTrisomy21Delivery(age: number): number {
+  const ages = Object.keys(TRISOMY21_DELIVERY_DATA).map(Number).sort((a, b) => a - b);
+
+  // Clamp to available range
+  if (age < ages[0]) return TRISOMY21_DELIVERY_DATA[ages[0]];
+  if (age > ages[ages.length - 1]) return TRISOMY21_DELIVERY_DATA[ages[ages.length - 1]];
+
+  // Find exact match or closest
+  let ageKey = ages[0];
+  let minDiff = Math.abs(age - ages[0]);
+  for (const a of ages) {
+    const diff = Math.abs(age - a);
+    if (diff < minDiff) {
+      minDiff = diff;
+      ageKey = a;
+    }
+  }
+
+  return TRISOMY21_DELIVERY_DATA[ageKey];
 }
 
 // Blastulation Rates (Romanski 2022)
@@ -208,12 +340,241 @@ export function calculateAMHPercentile(amh: number, age: number): string {
   }
 }
 
-// Oocyte prediction model constants (La Marca 2012)
-export const OOCYTE_MODEL = {
-  intercept: 3.21,
-  ageCoefficient: 0.036,
-  amhCoefficient: 0.089,
-};
+// Cycle Cancellation Risk (Risk of not making it to retrieval)
+// Data represents the probability of cycle cancellation before oocyte retrieval
+// Format: { amhRange: { ageBand: risk } }
+const CYCLE_CANCELLATION_DATA: {
+  amhMin: number;
+  amhMax: number | null;
+  risks: { ageMin: number; ageMax: number | null; risk: number }[];
+}[] = [
+  {
+    amhMin: 2.01,
+    amhMax: null,
+    risks: [
+      { ageMin: 0, ageMax: 34, risk: 0.038 },
+      { ageMin: 35, ageMax: 37, risk: 0.045 },
+      { ageMin: 38, ageMax: 40, risk: 0.042 },
+      { ageMin: 41, ageMax: 42, risk: 0.050 },
+      { ageMin: 43, ageMax: null, risk: 0.080 },
+    ],
+  },
+  {
+    amhMin: 1.01,
+    amhMax: 2.0,
+    risks: [
+      { ageMin: 0, ageMax: 34, risk: 0.070 },
+      { ageMin: 35, ageMax: 37, risk: 0.014 },
+      { ageMin: 38, ageMax: 40, risk: 0.049 },
+      { ageMin: 41, ageMax: 42, risk: 0.067 },
+      { ageMin: 43, ageMax: null, risk: 0.091 },
+    ],
+  },
+  {
+    amhMin: 0.71,
+    amhMax: 1.0,
+    risks: [
+      { ageMin: 0, ageMax: 34, risk: 0.053 },
+      { ageMin: 35, ageMax: 37, risk: 0.023 },
+      { ageMin: 38, ageMax: 40, risk: 0.026 },
+      { ageMin: 41, ageMax: 42, risk: 0.089 },
+      { ageMin: 43, ageMax: null, risk: 0.081 },
+    ],
+  },
+  {
+    amhMin: 0.31,
+    amhMax: 0.7,
+    risks: [
+      { ageMin: 0, ageMax: 34, risk: 0.099 },
+      { ageMin: 35, ageMax: 37, risk: 0.115 },
+      { ageMin: 38, ageMax: 40, risk: 0.127 },
+      { ageMin: 41, ageMax: 42, risk: 0.211 },
+      { ageMin: 43, ageMax: null, risk: 0.221 },
+    ],
+  },
+  {
+    amhMin: 0.17,
+    amhMax: 0.3,
+    risks: [
+      { ageMin: 0, ageMax: 34, risk: 0.111 },
+      { ageMin: 35, ageMax: 37, risk: 0.275 },
+      { ageMin: 38, ageMax: 40, risk: 0.311 },
+      { ageMin: 41, ageMax: 42, risk: 0.322 },
+      { ageMin: 43, ageMax: null, risk: 0.400 },
+    ],
+  },
+  {
+    amhMin: 0,
+    amhMax: 0.16,
+    risks: [
+      { ageMin: 0, ageMax: 34, risk: 0.286 },
+      { ageMin: 35, ageMax: 37, risk: 0.458 },
+      { ageMin: 38, ageMax: 40, risk: 0.325 },
+      { ageMin: 41, ageMax: 42, risk: 0.429 },
+      { ageMin: 43, ageMax: null, risk: 0.357 },
+    ],
+  },
+];
+
+export function lookupCycleCancellationRisk(age: number, amh: number): number {
+  // Find the appropriate AMH band
+  const amhBand = CYCLE_CANCELLATION_DATA.find(
+    (band) => amh >= band.amhMin && (band.amhMax === null || amh <= band.amhMax)
+  );
+
+  if (!amhBand) {
+    // Default to highest risk if AMH is out of range
+    return CYCLE_CANCELLATION_DATA[CYCLE_CANCELLATION_DATA.length - 1].risks[
+      CYCLE_CANCELLATION_DATA[CYCLE_CANCELLATION_DATA.length - 1].risks.length - 1
+    ].risk;
+  }
+
+  // Find the appropriate age band within the AMH band
+  const ageBand = amhBand.risks.find(
+    (r) => age >= r.ageMin && (r.ageMax === null || age <= r.ageMax)
+  );
+
+  if (!ageBand) {
+    // Default to highest age band if age is out of range
+    return amhBand.risks[amhBand.risks.length - 1].risk;
+  }
+
+  return ageBand.risk;
+}
+
+// Oocyte Retrieval Data (Reichman et al. - AMH & age effect on egg yield)
+// Data from: "Value of antimüllerian hormone as a prognostic indicator of in vitro fertilization outcome"
+// Format: AMH range + Age band -> { mean, lowerQuartile, upperQuartile }
+const OOCYTE_RETRIEVAL_DATA: {
+  amhMin: number;
+  amhMax: number | null;
+  ageBands: {
+    ageMin: number;
+    ageMax: number | null;
+    mean: number;
+    lowerQuartile: number;
+    upperQuartile: number;
+  }[];
+}[] = [
+  {
+    amhMin: 0,
+    amhMax: 0.17,
+    ageBands: [
+      { ageMin: 0, ageMax: 35, mean: 4.8, lowerQuartile: 3, upperQuartile: 6 },
+      { ageMin: 35, ageMax: 38, mean: 4.9, lowerQuartile: 3, upperQuartile: 5 },
+      { ageMin: 38, ageMax: 41, mean: 4.1, lowerQuartile: 2, upperQuartile: 6 },
+      { ageMin: 41, ageMax: 43, mean: 4.2, lowerQuartile: 3, upperQuartile: 5 },
+      { ageMin: 43, ageMax: null, mean: 3.6, lowerQuartile: 2, upperQuartile: 5 },
+    ],
+  },
+  {
+    amhMin: 0.17,
+    amhMax: 0.3,
+    ageBands: [
+      { ageMin: 0, ageMax: 35, mean: 5.8, lowerQuartile: 3, upperQuartile: 9.5 },
+      { ageMin: 35, ageMax: 38, mean: 4.9, lowerQuartile: 3, upperQuartile: 7 },
+      { ageMin: 38, ageMax: 41, mean: 5.6, lowerQuartile: 3, upperQuartile: 8 },
+      { ageMin: 41, ageMax: 43, mean: 5.6, lowerQuartile: 3.5, upperQuartile: 7 },
+      { ageMin: 43, ageMax: null, mean: 4.6, lowerQuartile: 3, upperQuartile: 5.5 },
+    ],
+  },
+  {
+    amhMin: 0.3,
+    amhMax: 0.7,
+    ageBands: [
+      { ageMin: 0, ageMax: 35, mean: 8.6, lowerQuartile: 5, upperQuartile: 11 },
+      { ageMin: 35, ageMax: 38, mean: 8.3, lowerQuartile: 5, upperQuartile: 10 },
+      { ageMin: 38, ageMax: 41, mean: 7.4, lowerQuartile: 5, upperQuartile: 9 },
+      { ageMin: 41, ageMax: 43, mean: 7.3, lowerQuartile: 4, upperQuartile: 9 },
+      { ageMin: 43, ageMax: null, mean: 7.3, lowerQuartile: 4, upperQuartile: 9 },
+    ],
+  },
+  {
+    amhMin: 0.7,
+    amhMax: 1.0,
+    ageBands: [
+      { ageMin: 0, ageMax: 35, mean: 11.2, lowerQuartile: 8, upperQuartile: 14 },
+      { ageMin: 35, ageMax: 38, mean: 10.2, lowerQuartile: 7, upperQuartile: 13 },
+      { ageMin: 38, ageMax: 41, mean: 10.1, lowerQuartile: 6, upperQuartile: 13 },
+      { ageMin: 41, ageMax: 43, mean: 9.0, lowerQuartile: 6, upperQuartile: 11 },
+      { ageMin: 43, ageMax: null, mean: 7.1, lowerQuartile: 4, upperQuartile: 9 },
+    ],
+  },
+  {
+    amhMin: 1.0,
+    amhMax: 2.0,
+    ageBands: [
+      { ageMin: 0, ageMax: 35, mean: 13.4, lowerQuartile: 9, upperQuartile: 17 },
+      { ageMin: 35, ageMax: 38, mean: 11.5, lowerQuartile: 8, upperQuartile: 14 },
+      { ageMin: 38, ageMax: 41, mean: 11.9, lowerQuartile: 8, upperQuartile: 16 },
+      { ageMin: 41, ageMax: 43, mean: 11.2, lowerQuartile: 7, upperQuartile: 14 },
+      { ageMin: 43, ageMax: null, mean: 12.1, lowerQuartile: 8, upperQuartile: 16 },
+    ],
+  },
+  {
+    amhMin: 2.0,
+    amhMax: 4.0,
+    ageBands: [
+      { ageMin: 0, ageMax: 35, mean: 15.3, lowerQuartile: 12, upperQuartile: 19 },
+      { ageMin: 35, ageMax: 38, mean: 14.3, lowerQuartile: 9, upperQuartile: 17 },
+      { ageMin: 38, ageMax: 41, mean: 13.5, lowerQuartile: 9, upperQuartile: 17 },
+      { ageMin: 41, ageMax: 43, mean: 12.8, lowerQuartile: 8, upperQuartile: 14 },
+      { ageMin: 43, ageMax: null, mean: 15.6, lowerQuartile: 10, upperQuartile: 20.5 },
+    ],
+  },
+  {
+    amhMin: 4.0,
+    amhMax: null,
+    ageBands: [
+      { ageMin: 0, ageMax: 35, mean: 15.1, lowerQuartile: 10, upperQuartile: 20 },
+      { ageMin: 35, ageMax: 38, mean: 15.9, lowerQuartile: 11, upperQuartile: 18 },
+      { ageMin: 38, ageMax: 41, mean: 14.5, lowerQuartile: 9, upperQuartile: 18 },
+      { ageMin: 41, ageMax: 43, mean: 15.8, lowerQuartile: 13.5, upperQuartile: 18.5 },
+      { ageMin: 43, ageMax: null, mean: 12.7, lowerQuartile: 10, upperQuartile: 15 },
+    ],
+  },
+];
+
+export function lookupOocyteRetrieval(age: number, amh: number): OocyteRetrievalData {
+  // Find the appropriate AMH band
+  const amhBand = OOCYTE_RETRIEVAL_DATA.find(
+    (band) => amh >= band.amhMin && (band.amhMax === null || amh < band.amhMax)
+  );
+
+  if (!amhBand) {
+    // Default to lowest AMH band if out of range
+    const defaultBand = OOCYTE_RETRIEVAL_DATA[0].ageBands.find(
+      (b) => age >= b.ageMin && (b.ageMax === null || age < b.ageMax)
+    ) ?? OOCYTE_RETRIEVAL_DATA[0].ageBands[0];
+
+    return {
+      mean: defaultBand.mean,
+      lowerQuartile: defaultBand.lowerQuartile,
+      upperQuartile: defaultBand.upperQuartile,
+    };
+  }
+
+  // Find the appropriate age band within the AMH band
+  const ageBand = amhBand.ageBands.find(
+    (b) => age >= b.ageMin && (b.ageMax === null || age < b.ageMax)
+  );
+
+  if (!ageBand) {
+    // Default to highest age band if age is out of range
+    const defaultBand = amhBand.ageBands[amhBand.ageBands.length - 1];
+    return {
+      mean: defaultBand.mean,
+      lowerQuartile: defaultBand.lowerQuartile,
+      upperQuartile: defaultBand.upperQuartile,
+    };
+  }
+
+  return {
+    mean: ageBand.mean,
+    lowerQuartile: ageBand.lowerQuartile,
+    upperQuartile: ageBand.upperQuartile,
+  };
+}
 
 // Fixed rates
 export const MATURATION_RATE = 0.82; // MII rate
