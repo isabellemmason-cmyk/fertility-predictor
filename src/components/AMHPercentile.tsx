@@ -119,10 +119,6 @@ export function AMHPercentile({ age, amh }: AMHPercentileProps) {
           <div className="font-medium">{data.p75}</div>
           <div>75th</div>
         </div>
-        <div className="absolute text-center right-0">
-          <div className="font-medium text-orange-600">{data.percentileDOR}%</div>
-          <div>DOR Risk</div>
-        </div>
       </div>
 
       <p className="mt-3 text-xs text-gray-400">

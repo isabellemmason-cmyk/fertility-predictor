@@ -33,6 +33,7 @@ export interface IVFResults {
   expectedLiveBirths: number;
   healthyBabyConditional: number; // Probability assuming retrieval succeeds
   healthyBaby: number; // Overall probability including cancellation risk
+  cyclesNeededForOneEuploid: number | null; // Expected cycles needed if < 1 euploid per cycle
 }
 
 export interface OocyteRetrievalData {

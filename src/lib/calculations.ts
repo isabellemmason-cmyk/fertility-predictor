@@ -106,6 +106,9 @@ export function calculateIVF(inputs: PatientInputs): IVFResults {
   const pRetrievalSucceeds = 1 - cycleCancellationRisk;
   const healthyBaby = pRetrievalSucceeds * healthyBabyConditional;
 
+  // 11. Cycles needed to obtain one euploid embryo (if < 1 per cycle)
+  const cyclesNeededForOneEuploid = euploidBlasts < 1 ? 1 / euploidBlasts : null;
+
   return {
     cycleCancellationRisk,
     oocytes,
@@ -120,6 +123,7 @@ export function calculateIVF(inputs: PatientInputs): IVFResults {
     expectedLiveBirths,
     healthyBabyConditional,
     healthyBaby,
+    cyclesNeededForOneEuploid,
   };
 }
 

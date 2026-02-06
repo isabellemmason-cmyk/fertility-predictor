@@ -126,13 +126,30 @@ export function IVFResults({ results }: IVFResultsProps) {
           description="Chromosomally normal embryos"
         />
 
-        <Arrow />
-
-        <Step
-          label="P(≥1 Euploid Embryo)"
-          value={formatPercent(results.pAtLeastOneEuploid)}
-          description="Chance of having at least one normal embryo"
-        />
+        {results.cyclesNeededForOneEuploid && (
+          <div className="p-4 rounded-lg bg-amber-50 border-2 border-amber-200">
+            <div className="flex items-start gap-2">
+              <svg className="w-5 h-5 text-amber-600 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+              <div>
+                <p className="text-sm font-semibold text-amber-800">
+                  Multiple Cycles May Be Needed
+                </p>
+                <p className="text-sm text-amber-700 mt-1">
+                  {(() => {
+                    const lower = Math.floor(results.cyclesNeededForOneEuploid);
+                    const upper = Math.ceil(results.cyclesNeededForOneEuploid);
+                    const cycleText = lower === upper
+                      ? `Approximately ${lower} cycle${lower === 1 ? '' : 's'}`
+                      : `${lower}-${upper} cycles`;
+                    return `${cycleText} to obtain 1 euploid embryo`;
+                  })()}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
         <Arrow />
 
