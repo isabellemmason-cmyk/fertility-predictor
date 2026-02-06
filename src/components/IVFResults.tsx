@@ -98,7 +98,7 @@ export function IVFResults({ results }: IVFResultsProps) {
           label="Mature Oocytes (MII)"
           value={formatNumber(results.matureOocytes)}
           subValue="(82%)"
-          description="Metaphase II oocytes"
+          description={`Range: ${formatNumber(results.matureOocytesLowerQuartile, 1)}–${formatNumber(results.matureOocytesUpperQuartile, 1)} (IQR)`}
         />
 
         <Arrow />
@@ -107,7 +107,7 @@ export function IVFResults({ results }: IVFResultsProps) {
           label="Fertilized (2PN)"
           value={formatNumber(results.fertilized)}
           subValue="(72%)"
-          description="Successfully fertilized"
+          description={`Range: ${formatNumber(results.fertilizedLowerQuartile, 1)}–${formatNumber(results.fertilizedUpperQuartile, 1)} (IQR)`}
         />
 
         <Arrow />
@@ -115,7 +115,7 @@ export function IVFResults({ results }: IVFResultsProps) {
         <Step
           label="Blastocysts"
           value={formatNumber(results.blastocysts)}
-          description="Embryos reaching blastocyst stage"
+          description={`Range: ${formatNumber(results.blastocystsLowerQuartile, 1)}–${formatNumber(results.blastocystsUpperQuartile, 1)} (IQR)`}
         />
 
         <Arrow />
@@ -123,7 +123,7 @@ export function IVFResults({ results }: IVFResultsProps) {
         <Step
           label="Euploid Blastocysts"
           value={formatNumber(results.euploidBlasts)}
-          description="Chromosomally normal embryos"
+          description={`Range: ${formatNumber(results.euploidBlastsLowerQuartile, 1)}–${formatNumber(results.euploidBlastsUpperQuartile, 1)} (IQR)`}
         />
 
         {results.cyclesNeededForOneEuploid && (
@@ -153,18 +153,11 @@ export function IVFResults({ results }: IVFResultsProps) {
 
         <Arrow />
 
-        <div className="grid grid-cols-2 gap-3">
-          <Step
-            label="LB Rate per Euploid"
-            value={formatPercent(results.liveBirthPerEuploid)}
-            description="Per transfer"
-          />
-          <Step
-            label="Expected Live Births"
-            value={formatNumber(results.expectedLiveBirths, 2)}
-            description="Statistical expectation"
-          />
-        </div>
+        <Step
+          label="LB Rate per Euploid"
+          value={formatPercent(results.liveBirthPerEuploid)}
+          description="Per transfer"
+        />
 
         <Arrow />
 

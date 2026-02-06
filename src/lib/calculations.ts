@@ -74,17 +74,25 @@ export function calculateIVF(inputs: PatientInputs): IVFResults {
 
   // 2. Mature oocytes (MII) - 82% maturation rate
   const matureOocytes = oocytes * MATURATION_RATE;
+  const matureOocytesLowerQuartile = oocytesLowerQuartile * MATURATION_RATE;
+  const matureOocytesUpperQuartile = oocytesUpperQuartile * MATURATION_RATE;
 
   // 3. Fertilized (2PN) - 72% fertilization rate
   const fertilized = matureOocytes * FERTILIZATION_RATE;
+  const fertilizedLowerQuartile = matureOocytesLowerQuartile * FERTILIZATION_RATE;
+  const fertilizedUpperQuartile = matureOocytesUpperQuartile * FERTILIZATION_RATE;
 
   // 4. Blastocysts (age-specific rate)
   const blastRate = lookupBlastulation(inputs.age);
   const blastocysts = fertilized * blastRate;
+  const blastocystsLowerQuartile = fertilizedLowerQuartile * blastRate;
+  const blastocystsUpperQuartile = fertilizedUpperQuartile * blastRate;
 
   // 5. Euploid blastocysts
   const euploidyRate = lookupEuploidy(inputs.age);
   const euploidBlasts = blastocysts * euploidyRate;
+  const euploidBlastsLowerQuartile = blastocystsLowerQuartile * euploidyRate;
+  const euploidBlastsUpperQuartile = blastocystsUpperQuartile * euploidyRate;
 
   // 6. P(≥1 euploid embryo)
   // Formula: 1 - (1 - euploidy_rate)^blastocysts
@@ -95,6 +103,8 @@ export function calculateIVF(inputs: PatientInputs): IVFResults {
 
   // 8. Expected live births = euploid blasts × LB rate per euploid
   const expectedLiveBirths = euploidBlasts * liveBirthPerEuploid;
+  const expectedLiveBirthsLowerQuartile = euploidBlastsLowerQuartile * liveBirthPerEuploid;
+  const expectedLiveBirthsUpperQuartile = euploidBlastsUpperQuartile * liveBirthPerEuploid;
 
   // 9. Conditional healthy baby probability (assuming retrieval succeeds)
   // This is P(≥1 euploid) × LB rate per euploid, given that retrieval happens
@@ -115,12 +125,22 @@ export function calculateIVF(inputs: PatientInputs): IVFResults {
     oocytesLowerQuartile,
     oocytesUpperQuartile,
     matureOocytes,
+    matureOocytesLowerQuartile,
+    matureOocytesUpperQuartile,
     fertilized,
+    fertilizedLowerQuartile,
+    fertilizedUpperQuartile,
     blastocysts,
+    blastocystsLowerQuartile,
+    blastocystsUpperQuartile,
     euploidBlasts,
+    euploidBlastsLowerQuartile,
+    euploidBlastsUpperQuartile,
     pAtLeastOneEuploid,
     liveBirthPerEuploid,
     expectedLiveBirths,
+    expectedLiveBirthsLowerQuartile,
+    expectedLiveBirthsUpperQuartile,
     healthyBabyConditional,
     healthyBaby,
     cyclesNeededForOneEuploid,

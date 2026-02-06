@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import type { PatientInputs, Gravidity } from '../lib/types';
 
 interface PatientInputFormProps {
@@ -6,6 +7,13 @@ interface PatientInputFormProps {
 }
 
 export function PatientInputForm({ inputs, onChange }: PatientInputFormProps) {
+  const [amhInput, setAmhInput] = useState(inputs.amh.toString());
+
+  // Sync local state with parent state
+  useEffect(() => {
+    setAmhInput(inputs.amh.toString());
+  }, [inputs.amh]);
+
   const handleChange = (field: keyof PatientInputs, value: number | Gravidity) => {
     onChange({ ...inputs, [field]: value });
   };
@@ -49,11 +57,22 @@ export function PatientInputForm({ inputs, onChange }: PatientInputFormProps) {
         <input
           id="amh"
           type="number"
-          min={0.1}
+          min={0.01}
           max={15}
-          step={0.1}
-          value={inputs.amh}
-          onChange={(e) => handleChange('amh', Math.max(0.1, Number(e.target.value)))}
+          step={0.01}
+          value={amhInput}
+          onChange={(e) => {
+            setAmhInput(e.target.value);
+            if (e.target.value !== '') {
+              handleChange('amh', Number(e.target.value));
+            }
+          }}
+          onBlur={(e) => {
+            const value = e.target.value === '' ? 0.01 : Number(e.target.value);
+            const validValue = value < 0.01 ? 0.01 : value;
+            setAmhInput(validValue.toString());
+            handleChange('amh', validValue);
+          }}
           className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
         <p className="text-xs text-gray-400">Used for IVF oocyte prediction</p>

@@ -25,12 +25,22 @@ export interface IVFResults {
   oocytesLowerQuartile: number;
   oocytesUpperQuartile: number;
   matureOocytes: number;
+  matureOocytesLowerQuartile: number;
+  matureOocytesUpperQuartile: number;
   fertilized: number;
+  fertilizedLowerQuartile: number;
+  fertilizedUpperQuartile: number;
   blastocysts: number;
+  blastocystsLowerQuartile: number;
+  blastocystsUpperQuartile: number;
   euploidBlasts: number;
+  euploidBlastsLowerQuartile: number;
+  euploidBlastsUpperQuartile: number;
   pAtLeastOneEuploid: number;
   liveBirthPerEuploid: number;
   expectedLiveBirths: number;
+  expectedLiveBirthsLowerQuartile: number;
+  expectedLiveBirthsUpperQuartile: number;
   healthyBabyConditional: number; // Probability assuming retrieval succeeds
   healthyBaby: number; // Overall probability including cancellation risk
   cyclesNeededForOneEuploid: number | null; // Expected cycles needed if < 1 euploid per cycle
