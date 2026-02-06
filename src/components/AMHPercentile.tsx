@@ -1,4 +1,4 @@
-import { lookupAMHPercentile, calculateAMHPercentile } from '../lib/lookupTables';
+import { lookupAMHPercentile } from '../lib/lookupTables';
 
 interface AMHPercentileProps {
   age: number;
@@ -7,7 +7,6 @@ interface AMHPercentileProps {
 
 export function AMHPercentile({ age, amh }: AMHPercentileProps) {
   const data = lookupAMHPercentile(age);
-  const percentileRange = calculateAMHPercentile(amh, age);
 
   if (!data) {
     return null;
@@ -50,14 +49,6 @@ export function AMHPercentile({ age, amh }: AMHPercentileProps) {
   };
 
   const markerPosition = getMarkerPosition(amh);
-
-  // Determine color based on percentile
-  const getStatusColor = () => {
-    if (amh < data.p25) return 'text-orange-600';
-    if (amh <= data.median) return 'text-yellow-600';
-    if (amh <= data.p75) return 'text-green-600';
-    return 'text-blue-600';
-  };
 
   const getStatusBg = () => {
     if (amh < data.p25) return 'bg-orange-50';
