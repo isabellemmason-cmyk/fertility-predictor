@@ -70,9 +70,6 @@ export function AMHPercentile({ age, amh }: AMHPercentileProps) {
     <div className={`rounded-lg p-4 ${getStatusBg()}`}>
       <div className="flex items-center justify-between mb-3">
         <span className="text-sm font-medium text-gray-700">AMH Percentile</span>
-        <span className={`text-sm font-semibold ${getStatusColor()}`}>
-          {percentileRange}
-        </span>
       </div>
 
       {/* Visual bar */}

@@ -162,7 +162,7 @@ export function IVFResults({ results }: IVFResultsProps) {
         <Arrow />
 
         <Step
-          label="Healthy Baby Probability"
+          label="Euploid Live Birth"
           value={formatPercent(results.healthyBaby)}
           description="Overall probability (includes cycle cancellation risk)"
           isHighlight

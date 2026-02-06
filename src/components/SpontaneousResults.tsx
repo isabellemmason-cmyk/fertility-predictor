@@ -106,7 +106,7 @@ export function SpontaneousResults({ results, timeHorizon }: SpontaneousResultsP
           <h3 className="text-sm font-semibold text-blue-800 mb-3">Trisomy 21 (Down Syndrome) Risk</h3>
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-xs text-blue-700">At 10 weeks (1st trimester)</span>
+              <span className="text-xs text-blue-700">1st trimester</span>
               <span className="text-sm font-semibold text-blue-900">
                 1 in {results.trisomy21FirstTrimester} ({formatPercent(1 / results.trisomy21FirstTrimester)})
               </span>
@@ -133,7 +133,7 @@ export function SpontaneousResults({ results, timeHorizon }: SpontaneousResultsP
         </div>
 
         <Step
-          label="Healthy Baby Probability"
+          label="Live Birth without Chromosomal Aneuploidy"
           value={formatPercent(results.healthyBaby)}
           isHighlight
         />
