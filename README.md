@@ -2,7 +2,7 @@
 
 A web-based tool for reproductive endocrinology practitioners to compare fertility outcomes between spontaneous conception and IVF + PGT-A pathways.
 
-**Live Demo**: [https://hendrixguar.github.io/fertility-predictor/](https://hendrixguar.github.io/fertility-predictor/)
+**Live Demo**: [https://isabellemmason-cmyk.github.io/fertility-predictor/](https://isabellemmason-cmyk.github.io/fertility-predictor/)
 
 ## Features
 
@@ -45,7 +45,7 @@ All calculations are based on peer-reviewed clinical research:
 ### Installation
 
 ```bash
-git clone https://github.com/hendrixguar/fertility-predictor.git
+git clone https://github.com/isabellemmason-cmyk/fertility-predictor.git
 cd fertility-predictor
 npm install
 ```
