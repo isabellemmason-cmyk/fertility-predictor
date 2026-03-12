@@ -12,6 +12,7 @@ const DEFAULT_INPUTS: PatientInputs = {
   amh: 2.0,
   gravidity: 'nulligravid',
   timeHorizon: 12,
+  dataSource: 'published',
 };
 
 function App() {

@@ -76,6 +76,35 @@ export function IVFResults({ results }: IVFResultsProps) {
         </div>
       </div>
 
+      {results.lowSampleSizeWarning && (
+        <div className="mb-6 p-4 rounded-lg bg-yellow-50 border-2 border-yellow-200">
+          <div className="flex items-start gap-2">
+            <svg
+              className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+            <div>
+              <p className="text-sm font-semibold text-yellow-800">
+                Limited Data for This Age/AMH Combination
+              </p>
+              <p className="text-sm text-yellow-700 mt-1">
+                The prediction model has limited data (n &lt; 10) for this specific age and AMH
+                combination. Predictions may be less accurate. Interpret with caution.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-3">
         <Step
           label="Risk of Cycle Cancellation"
@@ -97,7 +126,7 @@ export function IVFResults({ results }: IVFResultsProps) {
         <Step
           label="Mature Oocytes (MII)"
           value={formatNumber(results.matureOocytes)}
-          subValue="(82%)"
+          subValue={`(${formatPercent(results.maturationRate, 1)})`}
           description={`Range: ${formatNumber(results.matureOocytesLowerQuartile, 1)}–${formatNumber(results.matureOocytesUpperQuartile, 1)} (IQR)`}
         />
 
@@ -106,7 +135,7 @@ export function IVFResults({ results }: IVFResultsProps) {
         <Step
           label="Fertilized (2PN)"
           value={formatNumber(results.fertilized)}
-          subValue="(72%)"
+          subValue={`(${formatPercent(results.fertilizationRate, 1)})`}
           description={`Range: ${formatNumber(results.fertilizedLowerQuartile, 1)}–${formatNumber(results.fertilizedUpperQuartile, 1)} (IQR)`}
         />
 

@@ -7,12 +7,16 @@ import {
   lookupTrisomy21SecondTrimester,
   lookupTrisomy21Delivery,
   lookupBlastulation,
+  lookupBlastulationUHFC,
+  lookupMaturation,
+  lookupFertilization,
   lookupEuploidy,
   lookupLiveBirthPerEuploid,
   lookupCycleCancellationRisk,
   lookupOocyteRetrieval,
-  MATURATION_RATE,
-  FERTILIZATION_RATE,
+  lookupOocyteRetrievalUHFC,
+  MATURATION_RATE_UHFC,
+  FERTILIZATION_RATE_UHFC,
 } from './lookupTables';
 
 /**
@@ -62,28 +66,42 @@ export function calculateSpontaneous(inputs: PatientInputs): SpontaneousResults 
  * Pathway B: IVF with preimplantation genetic testing
  */
 export function calculateIVF(inputs: PatientInputs): IVFResults {
+  // Determine which data source to use
+  const useUHFC = inputs.dataSource === 'uhfc';
+
   // 0. Cycle cancellation risk (risk of not making it to retrieval)
+  // Use published data for both data sources
   const cycleCancellationRisk = lookupCycleCancellationRisk(inputs.age, inputs.amh);
 
-  // 1. Predicted oocytes retrieved (Reichman et al.)
-  // Based on clinical data stratified by AMH and age
-  const oocyteData = lookupOocyteRetrieval(inputs.age, inputs.amh);
-  const oocytes = oocyteData.mean;
+  // 1. Predicted oocytes retrieved
+  // Published: Reichman et al. (uses mean)
+  // UHFC: Clinical cohort data 2021-2025 (uses median)
+  const oocyteData = useUHFC
+    ? lookupOocyteRetrievalUHFC(inputs.age, inputs.amh)
+    : lookupOocyteRetrieval(inputs.age, inputs.amh);
+  const oocytes = useUHFC ? (oocyteData.median ?? oocyteData.mean) : oocyteData.mean;
   const oocytesLowerQuartile = oocyteData.lowerQuartile;
   const oocytesUpperQuartile = oocyteData.upperQuartile;
+  const lowSampleSizeWarning = useUHFC && (oocyteData.lowSampleSize ?? false);
 
-  // 2. Mature oocytes (MII) - 82% maturation rate
-  const matureOocytes = oocytes * MATURATION_RATE;
-  const matureOocytesLowerQuartile = oocytesLowerQuartile * MATURATION_RATE;
-  const matureOocytesUpperQuartile = oocytesUpperQuartile * MATURATION_RATE;
+  // 2. Mature oocytes (MII)
+  // Published: Romanski 2022 age-specific maturation rates
+  // UHFC: 77% maturation rate (constant)
+  const maturationRate = useUHFC ? MATURATION_RATE_UHFC : lookupMaturation(inputs.age);
+  const matureOocytes = oocytes * maturationRate;
+  const matureOocytesLowerQuartile = oocytesLowerQuartile * maturationRate;
+  const matureOocytesUpperQuartile = oocytesUpperQuartile * maturationRate;
 
-  // 3. Fertilized (2PN) - 72% fertilization rate
-  const fertilized = matureOocytes * FERTILIZATION_RATE;
-  const fertilizedLowerQuartile = matureOocytesLowerQuartile * FERTILIZATION_RATE;
-  const fertilizedUpperQuartile = matureOocytesUpperQuartile * FERTILIZATION_RATE;
+  // 3. Fertilized (2PN)
+  // Published: Romanski 2022 age-specific fertilization rates
+  // UHFC: 83% fertilization rate (constant)
+  const fertilizationRate = useUHFC ? FERTILIZATION_RATE_UHFC : lookupFertilization(inputs.age);
+  const fertilized = matureOocytes * fertilizationRate;
+  const fertilizedLowerQuartile = matureOocytesLowerQuartile * fertilizationRate;
+  const fertilizedUpperQuartile = matureOocytesUpperQuartile * fertilizationRate;
 
   // 4. Blastocysts (age-specific rate)
-  const blastRate = lookupBlastulation(inputs.age);
+  const blastRate = useUHFC ? lookupBlastulationUHFC(inputs.age) : lookupBlastulation(inputs.age);
   const blastocysts = fertilized * blastRate;
   const blastocystsLowerQuartile = fertilizedLowerQuartile * blastRate;
   const blastocystsUpperQuartile = fertilizedUpperQuartile * blastRate;
@@ -127,9 +145,11 @@ export function calculateIVF(inputs: PatientInputs): IVFResults {
     matureOocytes,
     matureOocytesLowerQuartile,
     matureOocytesUpperQuartile,
+    maturationRate,
     fertilized,
     fertilizedLowerQuartile,
     fertilizedUpperQuartile,
+    fertilizationRate,
     blastocysts,
     blastocystsLowerQuartile,
     blastocystsUpperQuartile,
@@ -144,6 +164,7 @@ export function calculateIVF(inputs: PatientInputs): IVFResults {
     healthyBabyConditional,
     healthyBaby,
     cyclesNeededForOneEuploid,
+    lowSampleSizeWarning,
   };
 }
 
