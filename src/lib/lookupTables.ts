@@ -210,8 +210,9 @@ export function lookupTrisomy21Delivery(age: number): number {
 }
 
 // Blastulation Rates (Romanski 2022)
+// Blastocysts per 2PN fertilized oocyte
 const BLASTULATION_DATA: Record<number, number> = {
-  30: 0.667, // ≤30
+  30: 0.667,  // ≤30
   31: 0.700,
   32: 0.707,
   33: 0.667,
@@ -225,7 +226,7 @@ const BLASTULATION_DATA: Record<number, number> = {
   41: 0.600,
   42: 0.547,
   43: 0.571,
-  44: 0.429, // ≥44
+  44: 0.429,  // ≥44
 };
 
 export function lookupBlastulation(age: number): number {
@@ -538,13 +539,13 @@ const OOCYTE_RETRIEVAL_DATA: {
 export function lookupOocyteRetrieval(age: number, amh: number): OocyteRetrievalData {
   // Find the appropriate AMH band
   const amhBand = OOCYTE_RETRIEVAL_DATA.find(
-    (band) => amh >= band.amhMin && (band.amhMax === null || amh < band.amhMax)
+    (band) => amh >= band.amhMin && (band.amhMax === null || amh <= band.amhMax)
   );
 
   if (!amhBand) {
     // Default to lowest AMH band if out of range
     const defaultBand = OOCYTE_RETRIEVAL_DATA[0].ageBands.find(
-      (b) => age >= b.ageMin && (b.ageMax === null || age < b.ageMax)
+      (b) => age >= b.ageMin && (b.ageMax === null || age <= b.ageMax)
     ) ?? OOCYTE_RETRIEVAL_DATA[0].ageBands[0];
 
     return {
@@ -556,7 +557,7 @@ export function lookupOocyteRetrieval(age: number, amh: number): OocyteRetrieval
 
   // Find the appropriate age band within the AMH band
   const ageBand = amhBand.ageBands.find(
-    (b) => age >= b.ageMin && (b.ageMax === null || age < b.ageMax)
+    (b) => age >= b.ageMin && (b.ageMax === null || age <= b.ageMax)
   );
 
   if (!ageBand) {
@@ -576,6 +577,212 @@ export function lookupOocyteRetrieval(age: number, amh: number): OocyteRetrieval
   };
 }
 
-// Fixed rates
-export const MATURATION_RATE = 0.82; // MII rate
-export const FERTILIZATION_RATE = 0.72; // 2PN rate
+// Fixed rates (Published Data) - Romanski 2022
+// Age-specific maturation rates (MII / oocytes retrieved)
+const MATURATION_DATA: Record<number, number> = {
+  30: 0.818,  // ≤30
+  31: 0.818,
+  32: 0.818,
+  33: 0.815,
+  34: 0.807,
+  35: 0.800,
+  36: 0.800,
+  37: 0.805,
+  38: 0.833,
+  39: 0.806,
+  40: 0.833,
+  41: 0.800,
+  42: 0.833,
+  43: 0.833,
+  44: 0.857,  // ≥44
+};
+
+export function lookupMaturation(age: number): number {
+  if (age <= 30) return MATURATION_DATA[30];
+  if (age >= 44) return MATURATION_DATA[44];
+  return MATURATION_DATA[age] ?? MATURATION_DATA[35];
+}
+
+// Age-specific fertilization rates (2PN / MII)
+// Calculated from Romanski 2022 mean values
+const FERTILIZATION_DATA: Record<number, number> = {
+  30: 0.786,  // ≤30: 11/14
+  31: 0.769,  // 10/13
+  32: 0.857,  // 12/14
+  33: 0.833,  // 10/12
+  34: 0.833,  // 10/12
+  35: 0.818,  // 9/11
+  36: 0.818,  // 9/11
+  37: 0.800,  // 8/10
+  38: 0.800,  // 8/10
+  39: 0.778,  // 7/9
+  40: 0.889,  // 8/9
+  41: 0.750,  // 6/8
+  42: 0.750,  // 6/8
+  43: 0.667,  // 6/9
+  44: 0.833,  // ≥44: 5/6
+};
+
+export function lookupFertilization(age: number): number {
+  if (age <= 30) return FERTILIZATION_DATA[30];
+  if (age >= 44) return FERTILIZATION_DATA[44];
+  return FERTILIZATION_DATA[age] ?? FERTILIZATION_DATA[35];
+}
+
+// ============================================================================
+// UHFC DATA (2021-2025)
+// ============================================================================
+
+// UHFC Oocyte Retrieval Data
+// Format: AMH range + Age band -> { median, lowerQuartile, upperQuartile, lowSampleSize }
+const OOCYTE_RETRIEVAL_DATA_UHFC: {
+  amhMin: number;
+  amhMax: number | null;
+  ageBands: {
+    ageMin: number;
+    ageMax: number | null;
+    median: number;
+    lowerQuartile: number;
+    upperQuartile: number;
+    lowSampleSize: boolean; // true if n < 10
+  }[];
+}[] = [
+  {
+    amhMin: 0,
+    amhMax: 0.3,
+    ageBands: [
+      { ageMin: 0, ageMax: 34, median: 5.0, lowerQuartile: 4, upperQuartile: 11, lowSampleSize: true },
+      { ageMin: 35, ageMax: 37, median: 6.0, lowerQuartile: 4, upperQuartile: 10, lowSampleSize: true },
+      { ageMin: 38, ageMax: 40, median: 2.5, lowerQuartile: 2, upperQuartile: 5, lowSampleSize: false },
+      { ageMin: 41, ageMax: null, median: 3.0, lowerQuartile: 2, upperQuartile: 4, lowSampleSize: false },
+    ],
+  },
+  {
+    amhMin: 0.3,
+    amhMax: 0.7,
+    ageBands: [
+      { ageMin: 0, ageMax: 34, median: 7.0, lowerQuartile: 4, upperQuartile: 9, lowSampleSize: false },
+      { ageMin: 35, ageMax: 37, median: 4.5, lowerQuartile: 3, upperQuartile: 7, lowSampleSize: false },
+      { ageMin: 38, ageMax: 40, median: 6.0, lowerQuartile: 4, upperQuartile: 7, lowSampleSize: false },
+      { ageMin: 41, ageMax: null, median: 5.0, lowerQuartile: 3, upperQuartile: 6, lowSampleSize: false },
+    ],
+  },
+  {
+    amhMin: 0.71,
+    amhMax: 1.0,
+    ageBands: [
+      { ageMin: 0, ageMax: 34, median: 8.0, lowerQuartile: 5, upperQuartile: 11, lowSampleSize: false },
+      { ageMin: 35, ageMax: 37, median: 9.0, lowerQuartile: 5, upperQuartile: 11, lowSampleSize: false },
+      { ageMin: 38, ageMax: 40, median: 8.0, lowerQuartile: 5, upperQuartile: 10, lowSampleSize: false },
+      { ageMin: 41, ageMax: null, median: 5.5, lowerQuartile: 4, upperQuartile: 8, lowSampleSize: false },
+    ],
+  },
+  {
+    amhMin: 1.01,
+    amhMax: 2.0,
+    ageBands: [
+      { ageMin: 0, ageMax: 34, median: 12.0, lowerQuartile: 8, upperQuartile: 16, lowSampleSize: false },
+      { ageMin: 35, ageMax: 37, median: 10.0, lowerQuartile: 7, upperQuartile: 14, lowSampleSize: false },
+      { ageMin: 38, ageMax: 40, median: 9.0, lowerQuartile: 7, upperQuartile: 12, lowSampleSize: false },
+      { ageMin: 41, ageMax: null, median: 8.0, lowerQuartile: 6, upperQuartile: 9, lowSampleSize: false },
+    ],
+  },
+  {
+    amhMin: 2.01,
+    amhMax: 4.0,
+    ageBands: [
+      { ageMin: 0, ageMax: 34, median: 16.0, lowerQuartile: 12, upperQuartile: 21, lowSampleSize: false },
+      { ageMin: 35, ageMax: 37, median: 13.0, lowerQuartile: 10, upperQuartile: 18, lowSampleSize: false },
+      { ageMin: 38, ageMax: 40, median: 14.0, lowerQuartile: 10, upperQuartile: 19, lowSampleSize: false },
+      { ageMin: 41, ageMax: null, median: 11.5, lowerQuartile: 9, upperQuartile: 16, lowSampleSize: false },
+    ],
+  },
+  {
+    amhMin: 4.01,
+    amhMax: null,
+    ageBands: [
+      { ageMin: 0, ageMax: 34, median: 22.0, lowerQuartile: 16, upperQuartile: 28, lowSampleSize: false },
+      { ageMin: 35, ageMax: 37, median: 19.0, lowerQuartile: 15, upperQuartile: 24, lowSampleSize: false },
+      { ageMin: 38, ageMax: 40, median: 16.0, lowerQuartile: 12, upperQuartile: 19, lowSampleSize: false },
+      { ageMin: 41, ageMax: null, median: 22.0, lowerQuartile: 16, upperQuartile: 28, lowSampleSize: true },
+    ],
+  },
+];
+
+export function lookupOocyteRetrievalUHFC(age: number, amh: number): OocyteRetrievalData {
+  // Find the appropriate AMH band
+  const amhBand = OOCYTE_RETRIEVAL_DATA_UHFC.find(
+    (band) => amh >= band.amhMin && (band.amhMax === null || amh <= band.amhMax)
+  );
+
+  if (!amhBand) {
+    // Default to lowest AMH band if out of range
+    const defaultBand = OOCYTE_RETRIEVAL_DATA_UHFC[0].ageBands.find(
+      (b) => age >= b.ageMin && (b.ageMax === null || age <= b.ageMax)
+    ) ?? OOCYTE_RETRIEVAL_DATA_UHFC[0].ageBands[0];
+
+    return {
+      mean: defaultBand.median,
+      median: defaultBand.median,
+      lowerQuartile: defaultBand.lowerQuartile,
+      upperQuartile: defaultBand.upperQuartile,
+      lowSampleSize: defaultBand.lowSampleSize,
+    };
+  }
+
+  // Find the appropriate age band within the AMH band
+  const ageBand = amhBand.ageBands.find(
+    (b) => age >= b.ageMin && (b.ageMax === null || age <= b.ageMax)
+  );
+
+  if (!ageBand) {
+    // Default to highest age band if age is out of range
+    const defaultBand = amhBand.ageBands[amhBand.ageBands.length - 1];
+    return {
+      mean: defaultBand.median,
+      median: defaultBand.median,
+      lowerQuartile: defaultBand.lowerQuartile,
+      upperQuartile: defaultBand.upperQuartile,
+      lowSampleSize: defaultBand.lowSampleSize,
+    };
+  }
+
+  return {
+    mean: ageBand.median,
+    median: ageBand.median,
+    lowerQuartile: ageBand.lowerQuartile,
+    upperQuartile: ageBand.upperQuartile,
+    lowSampleSize: ageBand.lowSampleSize,
+  };
+}
+
+// UHFC Maturation Rate (constant across ages)
+export const MATURATION_RATE_UHFC = 0.77;
+
+// UHFC Fertilization Rate (constant across ages)
+export const FERTILIZATION_RATE_UHFC = 0.83;
+
+// UHFC Blastulation Rates (age-specific)
+const BLASTULATION_DATA_UHFC: Record<number, number> = {
+  30: 0.5,  // ≤38
+  31: 0.5,
+  32: 0.5,
+  33: 0.5,
+  34: 0.5,
+  35: 0.5,
+  36: 0.5,
+  37: 0.5,
+  38: 0.5,
+  39: 0.4,  // ≥39
+  40: 0.4,
+  41: 0.4,
+  42: 0.4,
+  43: 0.4,
+  44: 0.4,
+};
+
+export function lookupBlastulationUHFC(age: number): number {
+  if (age <= 30) return BLASTULATION_DATA_UHFC[30];
+  if (age >= 44) return BLASTULATION_DATA_UHFC[44];
+  return BLASTULATION_DATA_UHFC[age] ?? BLASTULATION_DATA_UHFC[30];
+}
