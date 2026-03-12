@@ -82,16 +82,34 @@ function App() {
             </p>
 
             <p className="font-medium text-gray-700 pt-3">Data Sources</p>
-            <ul className="grid grid-cols-1 md:grid-cols-2 gap-1">
-              <li>• Oocyte retrieval: Reichman et al.</li>
-              <li>• Spontaneous fecundability: Steiner 2016</li>
-              <li>• Miscarriage rates: Magnus 2019</li>
-              <li>• Aneuploidy risk: ACOG 2020</li>
-              <li>• Blastulation rates: Romanski 2022</li>
-              <li>• Euploidy rates: Franasiak 2014</li>
-              <li>• Live birth per euploid: Yan 2021, Linder 2025</li>
-              <li>• AMH reference: Aslan 2025</li>
-            </ul>
+
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">IVF - Published Data</p>
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-1">
+                <li>• Oocyte retrieval: Reichman et al.</li>
+                <li>• Embryo development: Romanski 2022</li>
+              </ul>
+            </div>
+
+            <div className="space-y-2 pt-2">
+              <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">IVF - UHFC Clinical Data</p>
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-1">
+                <li>• Oocyte retrieval: UHFC 2021-2025</li>
+                <li>• Embryo development: UHFC 2021-2025</li>
+              </ul>
+            </div>
+
+            <div className="space-y-2 pt-2">
+              <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Shared Data Sources</p>
+              <ul className="grid grid-cols-1 md:grid-cols-2 gap-1">
+                <li>• Spontaneous fecundability: Steiner 2016</li>
+                <li>• Miscarriage rates: Magnus 2019</li>
+                <li>• Aneuploidy risk: ACOG 2020</li>
+                <li>• Euploidy rates: Franasiak 2014</li>
+                <li>• Live birth per euploid: Yan 2021, Linder 2025</li>
+                <li>• AMH reference: Aslan 2025</li>
+              </ul>
+            </div>
           </div>
         </div>
       </footer>
