@@ -150,7 +150,7 @@ export function IVFResults({ results }: IVFResultsProps) {
         <Arrow />
 
         <Step
-          label="Euploid Blastocysts"
+          label="Usable Blastocysts"
           value={formatNumber(results.euploidBlasts)}
           description={`Range: ${formatNumber(results.euploidBlastsLowerQuartile, 1)}–${formatNumber(results.euploidBlastsUpperQuartile, 1)} (IQR)`}
         />
@@ -183,7 +183,7 @@ export function IVFResults({ results }: IVFResultsProps) {
         <Arrow />
 
         <Step
-          label="LB Rate per Euploid"
+          label="LB Rate per Transfer"
           value={formatPercent(results.liveBirthPerEuploid)}
           description="Per transfer"
         />
@@ -191,7 +191,7 @@ export function IVFResults({ results }: IVFResultsProps) {
         <Arrow />
 
         <Step
-          label="Euploid Live Birth"
+          label="Live Birth (IVF + PGT-A)"
           value={formatPercent(results.healthyBaby)}
           description="Overall probability (includes cycle cancellation risk)"
           isHighlight
