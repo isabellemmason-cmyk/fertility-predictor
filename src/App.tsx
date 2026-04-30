@@ -58,6 +58,7 @@ function App() {
               <SpontaneousResults
                 results={spontaneousResults}
                 timeHorizon={inputs.timeHorizon}
+                age={inputs.age}
               />
               <IVFResults results={ivfResults} />
             </div>

@@ -4,6 +4,7 @@ import { formatPercent } from '../lib/calculations';
 interface SpontaneousResultsProps {
   results: SpontaneousResultsType;
   timeHorizon: number;
+  age: number;
 }
 
 interface StepProps {
@@ -33,7 +34,7 @@ function Step({ label, value, description, isHighlight }: StepProps) {
   );
 }
 
-export function SpontaneousResults({ results, timeHorizon }: SpontaneousResultsProps) {
+export function SpontaneousResults({ results, timeHorizon, age }: SpontaneousResultsProps) {
   return (
     <div className="bg-white rounded-xl shadow-sm p-6">
       <div className="flex items-center gap-3 mb-6">
@@ -50,7 +51,11 @@ export function SpontaneousResults({ results, timeHorizon }: SpontaneousResultsP
         <Step
           label="Monthly Fecundability"
           value={formatPercent(results.fecundability)}
-          description="Chance of pregnancy per menstrual cycle"
+          description={
+            age < 30
+              ? "Chance of pregnancy per menstrual cycle · estimate based on ages 30–31 reference group (Steiner 2016 cohort ages 30–44)"
+              : "Chance of pregnancy per menstrual cycle"
+          }
         />
 
         <div className="flex items-center justify-center">
