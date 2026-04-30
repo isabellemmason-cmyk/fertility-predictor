@@ -96,9 +96,9 @@ export function SpontaneousResults({ results, timeHorizon }: SpontaneousResultsP
         </div>
 
         <Step
-          label="Aneuploidy Risk"
-          value={formatPercent(results.aneuploidyRisk)}
-          description="Any chromosomal anomaly at delivery"
+          label="Trisomy 13, 18, or 21 Risk at Birth"
+          value={formatPercent(results.aneuploidyRisk, 2)}
+          description="Risk of any one of T13, T18, or T21 at live birth (Cuckle & Morris 2021)"
         />
 
         {/* Trisomy 21 Risk Details */}
@@ -133,7 +133,7 @@ export function SpontaneousResults({ results, timeHorizon }: SpontaneousResultsP
         </div>
 
         <Step
-          label="Live Birth without Chromosomal Aneuploidy"
+          label="Live Birth without Trisomy 13, 18, or 21"
           value={formatPercent(results.healthyBaby)}
           isHighlight
         />

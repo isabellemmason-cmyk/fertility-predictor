@@ -46,19 +46,16 @@ export function lookupMiscarriage(age: number, gravidity: Gravidity): number {
   return MISCARRIAGE_DATA[ageKey][gravidity];
 }
 
-// Aneuploidy Risk at Delivery (ACOG 2020)
-// Values are percentages converted to decimals
+// Trisomy 13, 18, and 21 combined risk at live birth (Cuckle & Morris 2021, Prenat Diagn 41:573-583)
+// Values are rates per 1,000 live births converted to decimals
+// DS = Down syndrome (T21), ES = Edwards syndrome (T18), PS = Patau syndrome (T13)
 const ANEUPLOIDY_DATA: Record<number, number> = {
-  20: 0.00819672,
-  25: 0.00840336,
-  30: 0.00909091,
-  35: 0.01190476,
-  40: 0.025,
-  41: 0.025,
-  42: 0.025,
-  43: 0.025,
-  44: 0.025,
-  45: 0.025,
+  20: 0.000862,  // DS 0.677 + ES 0.112 + PS 0.0733 per 1,000
+  25: 0.000938,  // DS 0.746 + ES 0.116 + PS 0.0764 per 1,000
+  30: 0.001292,  // DS 1.06  + ES 0.139 + PS 0.0932 per 1,000
+  35: 0.003308,  // DS 2.83  + ES 0.283 + PS 0.195  per 1,000
+  40: 0.013658,  // DS 11.6  + ES 1.36  + PS 0.698  per 1,000
+  45: 0.033940,  // DS 27.8  + ES 4.68  + PS 1.46   per 1,000
 };
 
 export function lookupAneuploidy(age: number): number {
