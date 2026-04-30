@@ -185,7 +185,7 @@ export function IVFResults({ results }: IVFResultsProps) {
         <Step
           label="LB Rate per Transfer"
           value={formatPercent(results.liveBirthPerEuploid)}
-          description="Per transfer"
+          description="Based on euploid embryo transfers · success rates may be slightly lower if a mosaic embryo is used"
         />
 
         <Arrow />
