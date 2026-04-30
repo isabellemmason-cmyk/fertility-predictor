@@ -83,34 +83,39 @@ function App() {
               fertility options with a qualified reproductive endocrinologist.
             </p>
 
-            <p className="font-medium text-gray-700 pt-3">Data Sources</p>
+            <p className="font-medium text-gray-700 pt-3">References</p>
 
             <div className="space-y-2">
-              <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">IVF - Published Data</p>
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-1">
-                <li>• Oocyte retrieval: Reichman et al.</li>
-                <li>• Embryo development: Romanski 2022</li>
-              </ul>
+              <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Spontaneous Conception</p>
+              <ol className="space-y-1 list-decimal list-inside">
+                <li>Steiner AZ, Jukic AM. Impact of female age and nulligravidity on fecundity in an older reproductive age cohort. <em>Fertil Steril.</em> 2016;105(6):1584–1588.e1. doi:10.1016/j.fertnstert.2016.02.028</li>
+                <li>Magnus MC, Wilcox AJ, Morken NH, Weinberg CR, Håberg SE. Role of maternal age and pregnancy history in risk of miscarriage: prospective register based study. <em>BMJ.</em> 2019;364:l869. doi:10.1136/bmj.l869</li>
+                <li>Cuckle H, Morris J. Maternal age in the epidemiology of common autosomal trisomies. <em>Prenat Diagn.</em> 2021;41:573–583. doi:10.1002/pd.5840</li>
+                <li>Snijders RJ, Sundberg K, Holzgreve W, Henry G, Nicolaides KH. Maternal age- and gestation-specific risk for trisomy 21. <em>Ultrasound Obstet Gynecol.</em> 1999;13(3):167–170. doi:10.1046/j.1469-0823.1999.13030167.x</li>
+              </ol>
             </div>
 
             <div className="space-y-2 pt-2">
-              <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">IVF - UHFC Clinical Data</p>
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-1">
-                <li>• Oocyte retrieval: UHFC 2021-2025</li>
-                <li>• Embryo development: UHFC 2021-2025</li>
-              </ul>
+              <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">IVF + PGT-A (Published Data)</p>
+              <ol className="space-y-1 list-decimal list-inside" start={5}>
+                <li>Reichman DE, Goldschlag D, Rosenwaks Z. Value of antimüllerian hormone as a prognostic indicator of in vitro fertilization outcome. <em>Fertil Steril.</em> 2014;101(4):1034–1040.e1. doi:10.1016/j.fertnstert.2013.12.039</li>
+                <li>Romanski P, Aluko A, Bortoletto P, et al. Age-specific blastocyst conversion rates in embryo cryopreservation cycles. <em>Reprod Biomed Online.</em> 2022;45:432–439. doi:10.1016/j.rbmo.2022.04.009</li>
+                <li>Franasiak JM, Forman EJ, Hong KH, et al. The nature of aneuploidy with increasing age of the female partner: a review of 15,169 consecutive trophectoderm biopsies evaluated with comprehensive chromosomal screening. <em>Fertil Steril.</em> 2014;101(3):656–663.e1. doi:10.1016/j.fertnstert.2013.11.004</li>
+                <li>Yan J, Qin Y, Zhao H, et al. Live birth with or without preimplantation genetic testing for aneuploidy. <em>N Engl J Med.</em> 2021;385(22):2047–2058. doi:10.1056/NEJMoa2103613</li>
+                <li>Lindner P, Flannagan K, Li HJ, et al. Live birth outcomes after euploid transfer: autologous vs. donor oocyte embryos in patients aged &gt; 35 years. <em>F S Rep.</em> 2025;6(4):462–469. doi:10.1016/j.xfre.2025.08.006</li>
+              </ol>
             </div>
 
             <div className="space-y-2 pt-2">
-              <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Shared Data Sources</p>
-              <ul className="grid grid-cols-1 md:grid-cols-2 gap-1">
-                <li>• Spontaneous fecundability: Steiner 2016</li>
-                <li>• Miscarriage rates: Magnus 2019</li>
-                <li>• Aneuploidy risk: Cuckle &amp; Morris 2021</li>
-                <li>• Euploidy rates: Franasiak 2014</li>
-                <li>• Live birth per euploid: Yan 2021, Linder 2025</li>
-                <li>• AMH reference: Aslan 2025</li>
-              </ul>
+              <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">IVF + PGT-A (UHFC Clinical Data)</p>
+              <p className="text-xs text-gray-500">Oocyte retrieval and embryo development: University Hospitals Fertility Center clinical cohort, 2021–2025.</p>
+            </div>
+
+            <div className="space-y-2 pt-2">
+              <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">AMH Reference</p>
+              <ol className="space-y-1 list-decimal list-inside" start={10}>
+                <li>Aslan K, Kasapoglu I, Kosan B, Tunali A, Tellioglu I, Uncu G. Age-stratified anti-Müllerian hormone (AMH) nomogram: a comprehensive cohort study including 22,920 women. <em>Front Endocrinol (Lausanne).</em> 2025;16:1612194. doi:10.3389/fendo.2025.1612194</li>
+              </ol>
             </div>
           </div>
         </div>
