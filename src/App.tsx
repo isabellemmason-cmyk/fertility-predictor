@@ -13,7 +13,7 @@ const DEFAULT_INPUTS: PatientInputs = {
   priorPregnancy: false,
   priorMiscarriages: 0,
   timeHorizon: 12,
-  dataSource: 'published',
+  dataSource: 'uhfc',
 };
 
 function App() {
