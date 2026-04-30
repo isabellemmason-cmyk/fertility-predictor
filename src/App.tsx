@@ -106,7 +106,7 @@ function App() {
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-1">
                 <li>• Spontaneous fecundability: Steiner 2016</li>
                 <li>• Miscarriage rates: Magnus 2019</li>
-                <li>• Aneuploidy risk: ACOG 2020</li>
+                <li>• Aneuploidy risk: Cuckle &amp; Morris 2021</li>
                 <li>• Euploidy rates: Franasiak 2014</li>
                 <li>• Live birth per euploid: Yan 2021, Linder 2025</li>
                 <li>• AMH reference: Aslan 2025</li>
