@@ -1,4 +1,8 @@
-import type { Gravidity, AMHPercentileData, OocyteRetrievalData } from './types';
+import type { AMHPercentileData, OocyteRetrievalData } from './types';
+
+// Internal type — Steiner uses gravidity (any prior pregnancy), Magnus uses parity (prior live birth)
+// Both map to this same key shape for their respective lookup tables
+type Gravidity = 'nulligravid' | 'prior_pregnancy';
 
 // Spontaneous Fecundability (Steiner 2016)
 // Format: { ageMin: { nulligravid: rate, prior_pregnancy: rate } }
