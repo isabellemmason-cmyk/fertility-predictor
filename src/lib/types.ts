@@ -4,7 +4,6 @@ export interface PatientInputs {
   age: number;              // 20-45
   amh: number;              // ng/mL (for IVF pathway)
   priorPregnancy: boolean;  // any prior pregnancy (drives Steiner fecundability)
-  priorLiveBirth: boolean;  // prior live birth/parity (drives Magnus base miscarriage rate)
   priorMiscarriages: 0 | 1 | 2 | 3; // consecutive prior miscarriages (drives Magnus recurrence OR)
   timeHorizon: number;      // months (1-24, for spontaneous)
   dataSource: DataSource;   // 'published' or 'uhfc' for IVF embryo development

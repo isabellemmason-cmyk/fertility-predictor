@@ -24,7 +24,7 @@ export function PatientInputForm({ inputs, onChange }: PatientInputFormProps) {
   const handlePriorPregnancyChange = (value: boolean) => {
     // If clearing prior pregnancy, also clear downstream fields
     if (!value) {
-      onChange({ ...inputs, priorPregnancy: false, priorLiveBirth: false, priorMiscarriages: 0 });
+      onChange({ ...inputs, priorPregnancy: false, priorMiscarriages: 0 });
     } else {
       onChange({ ...inputs, priorPregnancy: true });
     }
@@ -111,30 +111,6 @@ export function PatientInputForm({ inputs, onChange }: PatientInputFormProps) {
           ))}
         </div>
       </div>
-
-      {/* Prior Live Birth — only shown if prior pregnancy */}
-      {inputs.priorPregnancy && (
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Prior live birth?</label>
-          <p className="text-xs text-gray-400">Determines base miscarriage rate by parity (Magnus 2019)</p>
-          <div className="grid grid-cols-2 gap-2">
-            {([false, true] as const).map((val) => (
-              <button
-                key={String(val)}
-                type="button"
-                onClick={() => handleChange('priorLiveBirth', val)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  inputs.priorLiveBirth === val
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {val ? 'Yes' : 'No'}
-              </button>
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* Prior Miscarriages — only shown if prior pregnancy */}
       {inputs.priorPregnancy && (

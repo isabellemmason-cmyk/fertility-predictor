@@ -28,18 +28,19 @@ export function lookupFecundability(age: number, gravidity: Gravidity): number {
   return FECUNDABILITY_DATA[ageKey][gravidity];
 }
 
-// Miscarriage Rates (Magnus 2019)
-// Using nulligravid -> nulliparous, prior_pregnancy -> parous
-const MISCARRIAGE_DATA: Record<number, { nulligravid: number; prior_pregnancy: number }> = {
-  20: { nulligravid: 0.10, prior_pregnancy: 0.05 },
-  25: { nulligravid: 0.10, prior_pregnancy: 0.05 },
-  30: { nulligravid: 0.12, prior_pregnancy: 0.06 },
-  35: { nulligravid: 0.18, prior_pregnancy: 0.09 },
-  40: { nulligravid: 0.34, prior_pregnancy: 0.17 },
-  45: { nulligravid: 0.53, prior_pregnancy: 0.53 },
+// Miscarriage Rates (Magnus 2019, Table 1)
+// Spontaneous miscarriage rate by age band, excluding induced abortions
+// Bands: 20-24, 25-29, 30-34, 35-39, 40-44, ≥45
+const MISCARRIAGE_DATA: Record<number, number> = {
+  20: 0.112, // 20-24: 11.2%
+  25: 0.097, // 25-29: 9.7%
+  30: 0.108, // 30-34: 10.8%
+  35: 0.167, // 35-39: 16.7%
+  40: 0.332, // 40-44: 33.2%
+  45: 0.569, // ≥45:   56.9%
 };
 
-export function lookupMiscarriage(age: number, gravidity: Gravidity): number {
+export function lookupMiscarriage(age: number): number {
   const ages = Object.keys(MISCARRIAGE_DATA).map(Number).sort((a, b) => a - b);
 
   let ageKey = ages[0];
@@ -47,7 +48,7 @@ export function lookupMiscarriage(age: number, gravidity: Gravidity): number {
     if (age >= a) ageKey = a;
   }
 
-  return MISCARRIAGE_DATA[ageKey][gravidity];
+  return MISCARRIAGE_DATA[ageKey];
 }
 
 // Trisomy 13, 18, and 21 combined risk at live birth (Cuckle & Morris 2021, Prenat Diagn 41:573-583)

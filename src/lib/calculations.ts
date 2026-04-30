@@ -34,9 +34,8 @@ export function calculateSpontaneous(inputs: PatientInputs): SpontaneousResults 
   // Formula: 1 - (1 - monthly_rate)^months
   const cumulativePregnancy = 1 - Math.pow(1 - fecundability, inputs.timeHorizon);
 
-  // 3. Miscarriage rate (Magnus 2019 — stratified by parity/prior live birth)
-  const miscarriageGroup = inputs.priorLiveBirth ? 'prior_pregnancy' : 'nulligravid';
-  const miscarriageRate = lookupMiscarriage(inputs.age, miscarriageGroup);
+  // 3. Miscarriage rate (Magnus 2019, Table 1 — age-stratified, spontaneous only)
+  const miscarriageRate = lookupMiscarriage(inputs.age);
 
   // 3a. Apply recurrence risk OR if patient has prior miscarriages (Magnus et al. 2019)
   const miscarriageRecurrenceOR = getMiscarriageRecurrenceOR(inputs.priorMiscarriages);

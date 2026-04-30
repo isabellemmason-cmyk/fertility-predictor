@@ -11,7 +11,6 @@ const DEFAULT_INPUTS: PatientInputs = {
   age: 35,
   amh: 2.0,
   priorPregnancy: false,
-  priorLiveBirth: false,
   priorMiscarriages: 0,
   timeHorizon: 12,
   dataSource: 'published',
