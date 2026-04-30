@@ -2,6 +2,8 @@ import type { PatientInputs, SpontaneousResults, IVFResults } from './types';
 import {
   lookupFecundability,
   lookupMiscarriage,
+  getMiscarriageRecurrenceOR,
+  applyMiscarriageOR,
   lookupAneuploidy,
   lookupTrisomy21FirstTrimester,
   lookupTrisomy21SecondTrimester,
@@ -24,18 +26,24 @@ import {
  * Pathway A: Natural conception over a time period
  */
 export function calculateSpontaneous(inputs: PatientInputs): SpontaneousResults {
-  // 1. Monthly fecundability (lookup by age + gravidity)
-  const fecundability = lookupFecundability(inputs.age, inputs.gravidity);
+  // 1. Monthly fecundability (Steiner 2016 — stratified by any prior pregnancy)
+  const fecundabilityGroup = inputs.priorPregnancy ? 'prior_pregnancy' : 'nulligravid';
+  const fecundability = lookupFecundability(inputs.age, fecundabilityGroup);
 
   // 2. Cumulative pregnancy probability after N months
   // Formula: 1 - (1 - monthly_rate)^months
   const cumulativePregnancy = 1 - Math.pow(1 - fecundability, inputs.timeHorizon);
 
-  // 3. Miscarriage rate (lookup by age + parity)
-  const miscarriageRate = lookupMiscarriage(inputs.age, inputs.gravidity);
+  // 3. Miscarriage rate (Magnus 2019 — stratified by parity/prior live birth)
+  const miscarriageGroup = inputs.priorLiveBirth ? 'prior_pregnancy' : 'nulligravid';
+  const miscarriageRate = lookupMiscarriage(inputs.age, miscarriageGroup);
 
-  // 4. Ongoing pregnancy rate = cumulative pregnancy × (1 - miscarriage rate)
-  const ongoingPregnancy = cumulativePregnancy * (1 - miscarriageRate);
+  // 3a. Apply recurrence risk OR if patient has prior miscarriages (Magnus et al. 2019)
+  const miscarriageRecurrenceOR = getMiscarriageRecurrenceOR(inputs.priorMiscarriages);
+  const adjustedMiscarriageRate = applyMiscarriageOR(miscarriageRate, miscarriageRecurrenceOR);
+
+  // 4. Ongoing pregnancy rate = cumulative pregnancy × (1 - adjusted miscarriage rate)
+  const ongoingPregnancy = cumulativePregnancy * (1 - adjustedMiscarriageRate);
 
   // 5. Aneuploidy risk at delivery
   const aneuploidyRisk = lookupAneuploidy(inputs.age);
@@ -52,6 +60,8 @@ export function calculateSpontaneous(inputs: PatientInputs): SpontaneousResults 
     fecundability,
     cumulativePregnancy,
     miscarriageRate,
+    miscarriageRecurrenceOR,
+    adjustedMiscarriageRate,
     ongoingPregnancy,
     aneuploidyRisk,
     trisomy21FirstTrimester,

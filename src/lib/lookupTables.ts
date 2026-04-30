@@ -206,6 +206,29 @@ export function lookupTrisomy21Delivery(age: number): number {
   return TRISOMY21_DELIVERY_DATA[ageKey];
 }
 
+// Miscarriage Recurrence Risk (Magnus et al. 2019)
+// Age-adjusted odds ratios for recurrent miscarriage
+// Source: "Role of maternal age and pregnancy history in risk of miscarriage: prospective register based study"
+const MISCARRIAGE_RECURRENCE_OR: Record<number, number> = {
+  0: 1.00, // no prior miscarriage — no adjustment
+  1: 1.54, // after 1 miscarriage (95% CI 1.48–1.60)
+  2: 2.21, // after 2 consecutive miscarriages (95% CI 2.03–2.41)
+  3: 3.97, // after 3+ consecutive miscarriages (95% CI 3.29–4.78)
+};
+
+export function getMiscarriageRecurrenceOR(priorMiscarriages: 0 | 1 | 2 | 3): number {
+  return MISCARRIAGE_RECURRENCE_OR[priorMiscarriages] ?? 1.0;
+}
+
+// Apply a miscarriage recurrence odds ratio to a base probability
+// Converts probability → odds → applies OR → converts back to probability
+export function applyMiscarriageOR(baseRate: number, or: number): number {
+  if (or === 1) return baseRate;
+  const baseOdds = baseRate / (1 - baseRate);
+  const adjustedOdds = baseOdds * or;
+  return adjustedOdds / (1 + adjustedOdds);
+}
+
 // Blastulation Rates (Romanski 2022)
 // Blastocysts per 2PN fertilized oocyte
 const BLASTULATION_DATA: Record<number, number> = {

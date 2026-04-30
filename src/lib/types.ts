@@ -1,18 +1,21 @@
-export type Gravidity = 'nulligravid' | 'prior_pregnancy';
 export type DataSource = 'published' | 'uhfc';
 
 export interface PatientInputs {
-  age: number;           // 20-45
-  amh: number;           // ng/mL (for IVF pathway)
-  gravidity: Gravidity;
-  timeHorizon: number;   // months (1-24, for spontaneous)
-  dataSource: DataSource; // 'published' or 'uhfc' for IVF embryo development
+  age: number;              // 20-45
+  amh: number;              // ng/mL (for IVF pathway)
+  priorPregnancy: boolean;  // any prior pregnancy (drives Steiner fecundability)
+  priorLiveBirth: boolean;  // prior live birth/parity (drives Magnus base miscarriage rate)
+  priorMiscarriages: 0 | 1 | 2 | 3; // consecutive prior miscarriages (drives Magnus recurrence OR)
+  timeHorizon: number;      // months (1-24, for spontaneous)
+  dataSource: DataSource;   // 'published' or 'uhfc' for IVF embryo development
 }
 
 export interface SpontaneousResults {
   fecundability: number;
   cumulativePregnancy: number;
-  miscarriageRate: number;
+  miscarriageRate: number;         // base rate from age/gravidity lookup
+  miscarriageRecurrenceOR: number; // OR applied (1.0 if no prior miscarriages)
+  adjustedMiscarriageRate: number; // miscarriageRate adjusted by recurrence OR
   ongoingPregnancy: number;
   aneuploidyRisk: number;
   trisomy21FirstTrimester: number; // 1 in X risk at 10 weeks

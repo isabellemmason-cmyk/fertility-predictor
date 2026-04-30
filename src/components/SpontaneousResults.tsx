@@ -73,8 +73,12 @@ export function SpontaneousResults({ results, timeHorizon }: SpontaneousResultsP
 
         <Step
           label="Miscarriage Rate"
-          value={formatPercent(results.miscarriageRate)}
-          description="If pregnancy is achieved"
+          value={formatPercent(results.adjustedMiscarriageRate)}
+          description={
+            results.miscarriageRecurrenceOR > 1
+              ? `If pregnancy is achieved · adjusted for recurrence risk (OR ${results.miscarriageRecurrenceOR.toFixed(2)}, Magnus 2019)`
+              : 'If pregnancy is achieved'
+          }
         />
 
         <div className="flex items-center justify-center">

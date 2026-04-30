@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
-import type { PatientInputs, Gravidity, DataSource } from '../lib/types';
+import type { PatientInputs, DataSource } from '../lib/types';
+
+type PriorMiscarriages = 0 | 1 | 2 | 3;
 
 interface PatientInputFormProps {
   inputs: PatientInputs;
@@ -15,8 +17,17 @@ export function PatientInputForm({ inputs, onChange }: PatientInputFormProps) {
     setAmhInput(inputs.amh.toString());
   }, [inputs.amh]);
 
-  const handleChange = (field: keyof PatientInputs, value: number | Gravidity | DataSource) => {
+  const handleChange = (field: keyof PatientInputs, value: number | boolean | DataSource | PriorMiscarriages) => {
     onChange({ ...inputs, [field]: value });
+  };
+
+  const handlePriorPregnancyChange = (value: boolean) => {
+    // If clearing prior pregnancy, also clear downstream fields
+    if (!value) {
+      onChange({ ...inputs, priorPregnancy: false, priorLiveBirth: false, priorMiscarriages: 0 });
+    } else {
+      onChange({ ...inputs, priorPregnancy: true });
+    }
   };
 
   return (
@@ -79,34 +90,75 @@ export function PatientInputForm({ inputs, onChange }: PatientInputFormProps) {
         <p className="text-xs text-gray-400">Used for IVF oocyte prediction</p>
       </div>
 
-      {/* Gravidity */}
+      {/* Prior Pregnancy */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">Gravidity Status</label>
+        <label className="text-sm font-medium text-gray-700">Prior pregnancy?</label>
+        <p className="text-xs text-gray-400">Any prior pregnancy including miscarriage (Steiner 2016)</p>
         <div className="grid grid-cols-2 gap-2">
-          <button
-            type="button"
-            onClick={() => handleChange('gravidity', 'nulligravid')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              inputs.gravidity === 'nulligravid'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Nulligravid
-          </button>
-          <button
-            type="button"
-            onClick={() => handleChange('gravidity', 'prior_pregnancy')}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              inputs.gravidity === 'prior_pregnancy'
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Prior Pregnancy
-          </button>
+          {([false, true] as const).map((val) => (
+            <button
+              key={String(val)}
+              type="button"
+              onClick={() => handlePriorPregnancyChange(val)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                inputs.priorPregnancy === val
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {val ? 'Yes' : 'No'}
+            </button>
+          ))}
         </div>
       </div>
+
+      {/* Prior Live Birth — only shown if prior pregnancy */}
+      {inputs.priorPregnancy && (
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">Prior live birth?</label>
+          <p className="text-xs text-gray-400">Determines base miscarriage rate by parity (Magnus 2019)</p>
+          <div className="grid grid-cols-2 gap-2">
+            {([false, true] as const).map((val) => (
+              <button
+                key={String(val)}
+                type="button"
+                onClick={() => handleChange('priorLiveBirth', val)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  inputs.priorLiveBirth === val
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {val ? 'Yes' : 'No'}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Prior Miscarriages — only shown if prior pregnancy */}
+      {inputs.priorPregnancy && (
+        <div className="space-y-2">
+          <label className="text-sm font-medium text-gray-700">Prior miscarriages?</label>
+          <p className="text-xs text-gray-400">Adjusts miscarriage rate using recurrence risk (Magnus 2019)</p>
+          <div className="grid grid-cols-4 gap-2">
+            {([0, 1, 2, 3] as PriorMiscarriages[]).map((n) => (
+              <button
+                key={n}
+                type="button"
+                onClick={() => handleChange('priorMiscarriages', n)}
+                className={`px-2 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  inputs.priorMiscarriages === n
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {n === 0 ? 'None' : n === 3 ? '3+' : n}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Time Horizon */}
       <div className="space-y-2">
