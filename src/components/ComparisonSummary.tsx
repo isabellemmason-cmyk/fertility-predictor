@@ -44,28 +44,6 @@ export function ComparisonSummary({ spontaneous, ivf, timeHorizon }: ComparisonS
         </div>
       </div>
 
-      {/* Difference */}
-      <div className={`rounded-lg p-4 ${difference >= 0 ? 'bg-green-50' : 'bg-orange-50'}`}>
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-600">IVF Advantage</span>
-          <div className="text-right">
-            <span className={`text-lg font-bold ${difference >= 0 ? 'text-green-600' : 'text-orange-600'}`}>
-              {difference >= 0 ? '+' : ''}{differencePercent.toFixed(1)}%
-            </span>
-            <span className="text-sm text-gray-400 ml-2">
-              ({relativeDifference >= 0 ? '+' : ''}{relativeDifference.toFixed(0)}% relative)
-            </span>
-          </div>
-        </div>
-        <p className="mt-2 text-xs text-gray-500">
-          {difference > 0.05
-            ? 'IVF + PGT-A shows meaningfully higher success probability for this patient profile.'
-            : difference < -0.05
-            ? 'Spontaneous conception may be the preferred approach for this patient profile.'
-            : 'Both pathways show similar success probabilities for this patient profile.'}
-        </p>
-      </div>
-
       {/* Additional context */}
       <div className="mt-4 p-4 bg-gray-50 rounded-lg">
         <h3 className="text-sm font-medium text-gray-700 mb-2">Key Considerations</h3>
